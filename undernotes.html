@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERNOTES — Underground Notebook</title>
+<style>
+:root{--bg:#080808;--panel:#111;--panel2:#191919;--text:#f5f5f5;--muted:#aaa;--line:#f4f4f4;--yellow:#f6d64a;--red:#ff4b4b;--shadow:#000}
+body.light{--bg:#f3eedb;--panel:#fffdf3;--panel2:#eee7d1;--text:#191919;--muted:#655f50;--line:#262626;--yellow:#c29a00;--red:#c62828;--shadow:#b7ae98}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Courier New",monospace;min-height:100vh;transition:background .2s,color .2s}
+button,input,select,textarea{font:inherit}button{cursor:pointer;color:var(--text);background:var(--panel);border:2px solid var(--line);padding:9px 12px}button:hover,button:focus-visible{color:var(--yellow);border-color:var(--yellow);outline:none}button:active{transform:translateY(1px)}input,select,textarea{background:var(--bg);color:var(--text);border:2px solid var(--line);padding:10px;min-width:0}input:focus,select:focus,textarea:focus{outline:2px solid var(--yellow);outline-offset:1px}
+.app{max-width:1400px;margin:auto;padding:18px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:3px solid var(--line);padding:8px 0 16px}.brand{display:flex;align-items:center;gap:13px}.heart{color:var(--red);font-size:34px;text-shadow:0 0 12px #f33;animation:beat 1.3s infinite}.brand h1{font-size:clamp(24px,4vw,36px);margin:0;letter-spacing:3px}.subtitle{color:var(--muted);font-size:12px;margin-top:5px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:16px;margin-top:16px}.sidebar,.workspace{border:2px solid var(--line);background:var(--panel);padding:15px;min-width:0}.section-label{font-weight:bold;color:var(--yellow);font-size:13px;letter-spacing:1px;margin:0 0 10px}.side-head{display:flex;justify-content:space-between;align-items:center}.side-head button{padding:4px 9px}.folder-list{display:flex;flex-direction:column;gap:5px;margin-bottom:18px}.folder-item{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;border:1px solid transparent;background:transparent;padding:8px}.folder-item.active{border-color:var(--yellow);color:var(--yellow);background:var(--panel2)}.folder-item .count{color:var(--muted);font-size:11px}.folder-actions{display:flex;gap:6px;margin:-8px 0 18px}.folder-actions button{font-size:12px;padding:6px}.small-note{color:var(--muted);font-size:11px;line-height:1.5}
+.searchbar{display:flex;gap:8px;margin-bottom:13px}.searchbar input{flex:1;width:100%}.notes-layout{display:grid;grid-template-columns:minmax(180px,250px) minmax(0,1fr);gap:14px;min-height:570px}.note-list{border-right:1px solid var(--line);padding-right:12px}.note-list-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.note-list-head h2{font-size:15px;margin:0}.note-cards{display:flex;flex-direction:column;gap:7px}.note-card{border:1px solid var(--line);padding:10px;background:var(--bg);cursor:pointer}.note-card.active{border:2px solid var(--yellow);padding:9px}.note-card h3{font-size:13px;margin:0 0 6px;overflow-wrap:anywhere}.note-card p{font-size:11px;color:var(--muted);margin:0 0 8px;line-height:1.4}.note-meta{display:flex;justify-content:space-between;gap:6px;color:var(--muted);font-size:10px}.star{color:var(--yellow)}
+.editor{display:flex;flex-direction:column;min-width:0}.editor-top{display:flex;gap:8px;align-items:center;margin-bottom:10px}.editor-top input{flex:1;width:100%;font-size:18px;font-weight:bold}.editor-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}.editor-controls button{padding:6px 9px;min-width:35px}.editor-controls select{padding:6px;max-width:140px}.editor-info{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;margin:8px 0}.rich-editor{min-height:390px;border:2px solid var(--line);padding:15px;background:var(--bg);line-height:1.6;overflow-wrap:anywhere;outline:none}.rich-editor:focus{border-color:var(--yellow)}.rich-editor:empty:before{content:"The Underground is quiet... write something.";color:var(--muted)}.rich-editor h1,.rich-editor h2{color:var(--yellow)}.rich-editor blockquote{border-left:3px solid var(--yellow);margin-left:0;padding-left:12px;color:var(--muted)}.rich-editor a{color:var(--yellow)}.editor-bottom{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px}.status{color:var(--yellow)}.save-point{position:fixed;right:20px;bottom:20px;z-index:10;background:var(--bg);border:3px solid var(--yellow);padding:12px 15px;display:flex;align-items:center;gap:10px;box-shadow:0 0 22px #f6d64a66;opacity:0;transform:translateY(15px);pointer-events:none}.save-point.show{animation:savepop 1.8s ease forwards}.save-star{color:var(--yellow);font-size:25px;animation:spin 1s ease}.dialog{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.dialog.open{display:flex}.dialog-box{background:var(--panel);border:3px solid var(--line);padding:20px;width:min(430px,100%);box-shadow:0 0 0 5px #000}.dialog-box h2{margin-top:0;color:var(--yellow)}.dialog-box input,.dialog-box select{width:100%;margin:7px 0 12px}.dialog-buttons{display:flex;justify-content:flex-end;gap:8px}.empty{color:var(--muted);font-size:12px;line-height:1.6;padding:12px 4px}.footer{text-align:center;color:var(--muted);font-size:11px;padding:18px 0 5px}
+.theme-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}.theme-chip{width:28px;height:28px;border:2px solid var(--line);padding:0}.theme-chip.selected{outline:2px solid var(--yellow);outline-offset:2px}
+body.theme-sans{font-family:Arial,sans-serif}body.theme-papyrus{--yellow:#ffbd4a;--red:#ff6262}body.theme-flowey{--yellow:#fff08a;--red:#ffdf4a}body.theme-sans .brand h1{letter-spacing:1px}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}@keyframes savepop{0%{opacity:0;transform:translateY(15px)}15%,75%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{order:2}.workspace{order:1}.notes-layout{grid-template-columns:1fr}.note-list{border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}.note-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.rich-editor{min-height:300px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{width:100%}.top-actions button{flex:1}}@media(max-width:420px){.app{padding:9px}.sidebar,.workspace{padding:10px}.brand h1{letter-spacing:1px}.editor-top{flex-wrap:wrap}.editor-top input{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="heart" aria-hidden="true">♥</div><div><h1>UNDERNOTES</h1><div class="subtitle">A NOTEBOOK FROM THE UNDERGROUND</div></div></div>
+    <div class="top-actions">
+      <button id="newNoteBtn">＋ New note</button><button id="exportAllBtn">Export all</button><button id="themeModeBtn">☼ Light mode</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-head"><p class="section-label">YOUR NOTEBOOKS</p><button id="addFolderBtn" aria-label="Add notebook">＋</button></div>
+      <div id="folderList" class="folder-list"></div>
+      <div class="folder-actions"><button id="renameFolderBtn">Rename</button><button id="deleteFolderBtn">Delete</button></div>
+      <p class="section-label">CHARACTER THEME</p>
+      <div class="theme-row" id="characterThemes">
+        <button class="theme-chip selected" data-theme="classic" title="Classic Undertale" style="background:#f6d64a"></button>
+        <button class="theme-chip" data-theme="sans" title="Sans" style="background:#5b91d9"></button>
+        <button class="theme-chip" data-theme="papyrus" title="Papyrus" style="background:#ff8b36"></button>
+        <button class="theme-chip" data-theme="flowey" title="Flowey" style="background:#ffdf4a"></button>
+        <button class="theme-chip" data-theme="undyne" title="Undyne" style="background:#4c9ee8"></button>
+      </div>
+      <p class="small-note">Choose a character colour mood. Your notes stay yours; this theme only changes the interface.</p>
+      <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+      <p class="section-label">SAVE POINT</p>
+      <p class="small-note">Your changes are saved automatically in this browser. Export a backup regularly so you can keep your notes in files.</p>
+      <button id="savePointBtn" style="width:100%;margin-top:10px">✦ SAVE</button>
+      <button id="importBtn" style="width:100%;margin-top:7px">Import backup</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </aside>
+    <main class="workspace">
+      <div class="searchbar"><input id="searchInput" type="search" placeholder="Search notes..."><button id="clearSearchBtn">Clear</button></div>
+      <div class="notes-layout">
+        <section class="note-list">
+          <div class="note-list-head"><h2 id="listHeading">All notes</h2><button id="newNoteSmall">＋</button></div>
+          <div id="noteCards" class="note-cards"></div>
+        </section>
+        <section class="editor">
+          <div class="editor-top"><input id="noteTitle" placeholder="Note title..." maxlength="160"><button id="favoriteBtn" title="Favourite note">☆</button></div>
+          <div class="editor-controls" aria-label="Text formatting">
+            <button data-command="bold" title="Bold"><b>B</b></button><button data-command="italic" title="Italic"><i>I</i></button><button data-command="underline" title="Underline"><u>U</u></button>
+            <select id="blockFormat" aria-label="Text style"><option value="P">Paragraph</option><option value="H1">Heading 1</option><option value="H2">Heading 2</option><option value="H3">Heading 3</option><option value="BLOCKQUOTE">Quote</option></select>
+            <button data-command="insertUnorderedList" title="Bulleted list">• List</button><button data-command="insertOrderedList" title="Numbered list">1. List</button><button id="linkBtn" title="Insert link">Link</button><button id="clearFormatBtn" title="Clear formatting">Clear style</button>
+          </div>
+          <div id="richEditor" class="rich-editor" contenteditable="true" role="textbox" aria-label="Note content" aria-multiline="true"></div>
+          <div class="editor-info"><span id="saveStatus" class="status">✦ Ready</span><span id="wordCount">0 words</span></div>
+          <div class="editor-bottom"><button id="exportTxtBtn">Export .TXT</button><button id="exportMdBtn">Export .MD</button><button id="deleteNoteBtn">Delete note</button></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="footer">✦ You are filled with determination. ✦<br>UNDERNOTES is a fan-made personal project inspired by Undertale.</footer>
+</div>
+<div class="save-point" id="saveToast"><span class="save-star">✦</span><span><strong>SAVE POINT</strong><br><small>Your progress has been saved.</small></span></div>
+<div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+  <div class="dialog-box"><h2 id="dialogTitle">New notebook</h2><label id="dialogLabel" for="dialogInput">Notebook name</label><input id="dialogInput" maxlength="60"><div class="dialog-buttons"><button id="dialogCancel">Cancel</button><button id="dialogConfirm">Confirm</button></div></div>
+</div>
+<script>
+(() => {
+'use strict';
+const STORAGE_KEY = 'undernotes-v1';
+const $ = id => document.getElementById(id);
+const defaultState = () => ({
+  folders:[{id:'general',name:'General'}],
+  notes:[{id:makeId(),folderId:'general',title:'Welcome to the Underground',content:'<p>You are filled with determination.</p><p>This is your new notebook. Create a note, organise it into notebooks, and use the formatting tools above.</p><blockquote>Remember to export backups if you want to move your notes to another browser or device.</blockquote>',favorite:true,updated:Date.now()}],
+  selectedFolder:'all',selectedNote:null,theme:'classic',light:false
+});
+function makeId(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+let state;
+try { state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); } catch { state=defaultState(); }
+if(!state.folders || !state.notes) state=defaultState();
+if(!state.folders.length) state.folders=[{id:'general',name:'General'}];
+state.notes.forEach(n=>{if(!state.folders.some(f=>f.id===n.folderId))n.folderId=state.folders[0].id;});
+if(!state.selectedNote || !state.notes.some(n=>n.id===state.selectedNote))state.selectedNote=state.notes[0]?.id||null;
+let currentDialogAction=null,saveTimer=null,lastToast=0;
+const editor=$('richEditor'),titleInput=$('noteTitle');
+function currentNote(){return state.notes.find(n=>n.id===state.selectedNote)||null}
+function plainText(html){const d=document.createElement('div');d.innerHTML=html;return (d.innerText||d.textContent||'').trim()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function persist(show=false){
+  try {localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('saveStatus').textContent='✦ Saved locally';}
+  catch(e){$('saveStatus').textContent='Storage full — export a backup';}
+  if(show)showSaveToast();
+}
+function queueSave(){ $('saveStatus').textContent='Saving...'; clearTimeout(saveTimer); saveTimer=setTimeout(()=>{const n=currentNote();if(n){n.title=titleInput.value.trim()||'Untitled note';n.content=editor.innerHTML;n.updated=Date.now();}persist();renderNotes();},350);}
+function showSaveToast(){const toast=$('saveToast');toast.classList.remove('show');void toast.offsetWidth;toast.classList.add('show');}
+function folderName(id){return state.folders.find(f=>f.id===id)?.name||'General'}
+function visibleNotes(){
+ const q=$('searchInput').value.trim().toLowerCase();
+ return state.notes.filter(n=>{
+  const folderOk=state.selectedFolder==='all'||(state.selectedFolder==='favorites'?n.favorite:n.folderId===state.selectedFolder);
+  const searchOk=!q||(n.title+' '+plainText(n.content)+' '+folderName(n.folderId)).toLowerCase().includes(q);
+  return folderOk&&searchOk;
+ }).sort((a,b)=>(Number(b.favorite)-Number(a.favorite))||b.updated-a.updated);
+}
+function renderFolders(){
+ const root=$('folderList');root.innerHTML='';
+ const items=[{id:'all',name:'All notes',icon:'▤'},{id:'favorites',name:'★ Favourites',icon:''},...state.folders.map(f=>({id:f.id,name:f.name,icon:'▣'}))];
+ items.forEach(f=>{
+  const count=f.id==='all'?state.notes.length:f.id==='favorites'?state.notes.filter(n=>n.favorite).length:state.notes.filter(n=>n.folderId===f.id).length;
+  const b=document.createElement('button');b.className='folder-item'+(state.selectedFolder===f.id?' active':'');b.innerHTML=`<span>${f.icon?f.icon+' ':''}${escapeHtml(f.name)}</span><span class="count">${count}</span>`;
+  b.onclick=()=>{state.selectedFolder=f.id;persist();renderFolders();renderNotes();};root.appendChild(b);
+ });
+ $('renameFolderBtn').disabled=state.selectedFolder==='all'||state.selectedFolder==='favorites';
+ $('deleteFolderBtn').disabled=state.selectedFolder==='all'||state.selectedFolder==='favorites';
+}
+function renderNotes(){
+ renderFolders();
+ const notes=visibleNotes();$('listHeading').textContent=state.selectedFolder==='all'?'All notes':state.selectedFolder==='favorites'?'Favourites':folderName(state.selectedFolder);
+ const root=$('noteCards');root.innerHTML='';
+ if(!notes.length){root.innerHTML='<div class="empty">No notes found.<br>Make a new note to begin.</div>';return}
+ notes.forEach(n=>{
+  const b=document.createElement('button');b.className='note-card'+(n.id===state.selectedNote?' active':'');b.innerHTML=`<h3>${n.favorite?'<span class="star">★ </span>':''}${escapeHtml(n.title||'Untitled note')}</h3><p>${escapeHtml(plainText(n.content).slice(0,100)||'Empty note')}</p><div class="note-meta"><span>${escapeHtml(folderName(n.folderId))}</span><span>${new Date(n.updated).toLocaleDateString()}</span></div>`;
+  b.onclick=()=>selectNote(n.id);root.appendChild(b);
+ });
+}
+function selectNote(id){
+ const old=currentNote();if(old){old.title=titleInput.value.trim()||'Untitled note';old.content=editor.innerHTML;}
+ state.selectedNote=id;const n=currentNote();titleInput.value=n?.title||'';editor.innerHTML=n?.content||'';
+ $('favoriteBtn').textContent=n?.favorite?'★':'☆';$('favoriteBtn').classList.toggle('star',!!n?.favorite);
+ persist();renderNotes();updateWordCount();
+}
+function newNote(){
+ const folder=state.folders.some(f=>f.id===state.selectedFolder)?state.selectedFolder:state.folders[0].id;
+ const n={id:makeId(),folderId:folder,title:'Untitled note',content:'',favorite:false,updated:Date.now()};
+ state.notes.unshift(n);state.selectedNote=n.id;titleInput.value=n.title;editor.innerHTML='';persist();renderNotes();updateWordCount();titleInput.focus();
+}
+function updateWordCount(){const t=plainText(editor.innerHTML);const words=t?t.split(/\s+/).filter(Boolean).length:0;$('wordCount').textContent=`${words} word${words===1?'':'s'}`;}
+function openDialog(title,label,value,action){$('dialogTitle').textContent=title;$('dialogLabel').textContent=label;$('dialogInput').value=value||'';$('dialog').classList.add('open');currentDialogAction=action;$('dialogInput').focus();}
+function closeDialog(){$('dialog').classList.remove('open');currentDialogAction=null}
+function addFolder(){openDialog('New notebook','Notebook name','',name=>{name=name.trim();if(!name)return;const f={id:makeId(),name};state.folders.push(f);state.selectedFolder=f.id;persist();renderNotes();});}
+function exportFile(filename,content,type='text/plain'){
+ const blob=new Blob([content],{type:type+';charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function safeFilename(s){return (s||'undernotes').replace(/[<>:"/\\|?*\x00-\x1F]/g,'-').trim().slice(0,80)||'undernotes'}
+function toMarkdown(n){
+ const d=document.createElement('div');d.innerHTML=n.content||'';
+ function convert(node){
+  if(node.nodeType===3)return node.nodeValue;
+  if(node.nodeType!==1)return '';
+  const tag=node.tagName.toLowerCase();let inner=[...node.childNodes].map(convert).join('');
+  if(tag==='b'||tag==='strong')return '**'+inner+'**';
+  if(tag==='i'||tag==='em')return '*'+inner+'*';
+  if(tag==='u')return '<u>'+inner+'</u>';
+  if(tag==='h1')return '# '+inner+'\n\n';if(tag==='h2')return '## '+inner+'\n\n';if(tag==='h3')return '### '+inner+'\n\n';
+  if(tag==='li')return '- '+inner+'\n';
+  if(tag==='ul'||tag==='ol')return inner+'\n';
+  if(tag==='blockquote')return inner.split('\n').filter(Boolean).map(x=>'> '+x).join('\n')+'\n\n';
+  if(tag==='br')return '\n';
+  if(tag==='a')return '['+inner+']('+node.getAttribute('href')+')';
+  if(tag==='p'||tag==='div')return inner+'\n\n';
+  return inner;
+ }
+ return '# '+(n.title||'Untitled note')+'\n\n'+[...d.childNodes].map(convert).join('').replace(/\n{3,}/g,'\n\n').trim()+'\n';
+}
+function exportCurrent(ext){
+ const n=currentNote();if(!n)return;
+ const content=ext==='md'?toMarkdown(n):n.title+'\n'+'='.repeat(Math.min((n.title||'Untitled note').length,60))+'\n\n'+plainText(n.content)+'\n';
+ exportFile(safeFilename(n.title)+'.'+(ext==='md'?'md':'txt'),content,ext==='md'?'text/markdown':'text/plain');
+}
+function exportAll(){
+ const payload={app:'UNDERNOTES',version:1,exportedAt:new Date().toISOString(),folders:state.folders,notes:state.notes};
+ exportFile('undernotes-backup.json',JSON.stringify(payload,null,2),'application/json');
+}
+function importBackup(file){
+ const reader=new FileReader();reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result);if(!Array.isArray(data.notes)||!Array.isArray(data.folders))throw new Error('This file does not look like an UNDERNOTES backup.');
+   const folders=data.folders.filter(f=>f&&typeof f.name==='string').map(f=>({id:String(f.id||makeId()),name:f.name.slice(0,60)}));
+   if(!folders.length)folders.push({id:'general',name:'General'});
+   const validIds=new Set(folders.map(f=>f.id));
+   const notes=data.notes.filter(n=>n&&typeof n==='object').map(n=>({id:String(n.id||makeId()),folderId:validIds.has(n.folderId)?n.folderId:folders[0].id,title:String(n.title||'Untitled note'),content:String(n.content||''),favorite:!!n.favorite,updated:Number(n.updated)||Date.now()}));
+   if(!confirm(`Import ${notes.length} notes and ${folders.length} notebooks? This replaces the notes currently in this browser.`))return;
+   state.folders=folders;state.notes=notes;state.selectedFolder='all';state.selectedNote=notes[0]?.id||null;persist();if(state.selectedNote)selectNote(state.selectedNote);else{titleInput.value='';editor.innerHTML='';}renderNotes();showSaveToast();
+  }catch(e){alert('Could not import backup: '+e.message)}
+ };reader.readAsText(file);
+}
+$('newNoteBtn').onclick=newNote;$('newNoteSmall').onclick=newNote;$('addFolderBtn').onclick=addFolder;
+$('renameFolderBtn').onclick=()=>{const f=state.folders.find(f=>f.id===state.selectedFolder);if(f)openDialog('Rename notebook','Notebook name',f.name,name=>{name=name.trim();if(name){f.name=name;persist();renderNotes();}})};
+$('deleteFolderBtn').onclick=()=>{const f=state.folders.find(f=>f.id===state.selectedFolder);if(!f)return;if(!confirm(`Delete notebook "${f.name}"? Its notes will be moved to General or the first remaining notebook.`))return;state.folders=state.folders.filter(x=>x.id!==f.id);if(!state.folders.length)state.folders=[{id:'general',name:'General'}];state.notes.forEach(n=>{if(n.folderId===f.id)n.folderId=state.folders[0].id});state.selectedFolder='all';persist();renderNotes();};
+$('dialogCancel').onclick=closeDialog;$('dialogConfirm').onclick=()=>{if(currentDialogAction)currentDialogAction($('dialogInput').value);closeDialog()};
+$('dialog').addEventListener('click',e=>{if(e.target===$('dialog'))closeDialog()});$('dialogInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('dialogConfirm').click();if(e.key==='Escape')closeDialog()});
+titleInput.addEventListener('input',queueSave);editor.addEventListener('input',()=>{queueSave();updateWordCount()});
+document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>{editor.focus();document.execCommand(b.dataset.command,false,null);queueSave()});
+$('blockFormat').onchange=()=>{editor.focus();document.execCommand('formatBlock',false,$('blockFormat').value);queueSave()};
+$('linkBtn').onclick=()=>{const url=prompt('Enter a link (https://...)');if(url&&/^https?:\/\//i.test(url)){editor.focus();document.execCommand('createLink',false,url);queueSave()}else if(url)alert('For safety, links must begin with http:// or https://.')};
+$('clearFormatBtn').onclick=()=>{editor.focus();document.execCommand('removeFormat',false,null);queueSave()};
+$('favoriteBtn').onclick=()=>{const n=currentNote();if(!n)return;n.favorite=!n.favorite;$('favoriteBtn').textContent=n.favorite?'★':'☆';$('favoriteBtn').classList.toggle('star',n.favorite);persist();renderNotes()};
+$('deleteNoteBtn').onclick=()=>{const n=currentNote();if(!n)return;if(!confirm(`Delete "${n.title}"? This cannot be undone unless you have a backup.`))return;state.notes=state.notes.filter(x=>x.id!==n.id);state.selectedNote=state.notes[0]?.id||null;if(state.selectedNote)selectNote(state.selectedNote);else{titleInput.value='';editor.innerHTML='';persist();}renderNotes()};
+$('exportTxtBtn').onclick=()=>exportCurrent('txt');$('exportMdBtn').onclick=()=>exportCurrent('md');$('exportAllBtn').onclick=exportAll;
+$('searchInput').addEventListener('input',renderNotes);$('clearSearchBtn').onclick=()=>{$('searchInput').value='';renderNotes()};
+$('savePointBtn').onclick=()=>{const n=currentNote();if(n){n.title=titleInput.value.trim()||'Untitled note';n.content=editor.innerHTML;n.updated=Date.now()}persist(true);renderNotes()};
+$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{const f=e.target.files[0];if(f)importBackup(f);e.target.value=''};
+$('themeModeBtn').onclick=()=>{state.light=!state.light;applyTheme();persist()};
+function applyTheme(){
+ document.body.classList.toggle('light',!!state.light);
+ $('themeModeBtn').textContent=state.light?'☾ Dark mode':'☼ Light mode';
+ document.body.classList.remove('theme-sans','theme-papyrus','theme-flowey');
+ if(state.theme==='sans')document.body.classList.add('theme-sans');
+ if(state.theme==='papyrus')document.body.classList.add('theme-papyrus');
+ if(state.theme==='flowey')document.body.classList.add('theme-flowey');
+ document.querySelectorAll('.theme-chip').forEach(b=>b.classList.toggle('selected',b.dataset.theme===state.theme));
+}
+$('characterThemes').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.theme=b.dataset.theme;applyTheme();persist()});
+window.addEventListener('beforeunload',()=>{const n=currentNote();if(n){n.title=titleInput.value.trim()||'Untitled note';n.content=editor.innerHTML;n.updated=Date.now();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}});
+applyTheme();renderFolders();renderNotes();
+if(state.selectedNote)selectNote(state.selectedNote);else{titleInput.value='';editor.innerHTML=''}
+})();
+</script>
+</body>
+</html>
